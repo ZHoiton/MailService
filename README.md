@@ -1,0 +1,2 @@
+# MailService
+Mailing service
