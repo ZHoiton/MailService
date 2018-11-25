@@ -24,7 +24,7 @@ class AuthenticationMailController extends Controller
 
             return response()
                 ->json(
-                    ['requst' => 'processed'
+                    ['request' => 'processed'
                         , 'email' => $emails_scheduled > 100 ? 'queued' : 'send'
                         , 'procces_time' => $teoretical_time_to_process]
                 );
@@ -41,11 +41,11 @@ class AuthenticationMailController extends Controller
 
             $emails_scheduled = $current_jobs->count();
 
-            $teoretical_time_to_process = $this->map($emails_scheduled, 0, 1000, 0, 10);
+            $teoretical_time_to_process = $this->map($emails_scheduled, 0, 1000, 0, 100);
 
             return response()
                 ->json(
-                    ['requst' => 'processed'
+                    ['request' => 'processed'
                         , 'email' => $emails_scheduled > 100 ? 'queued' : 'send'
                         , 'procces_time' => $teoretical_time_to_process]
                 );

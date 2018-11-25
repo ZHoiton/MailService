@@ -7,6 +7,6 @@
     <title>User Activation Email</title>
 </head>
 <body>
-    {{$activation_code}}
+    <a href="{{$activation_code}}">Activate Account!</a>
 </body>
 </html>
