@@ -7,6 +7,6 @@
     <title>Password Reset Email</title>
 </head>
 <body>
-    {{$reset_code}}
+    <a href="{{$reset_code}}">Reset Password</a>
 </body>
 </html>
