@@ -20,13 +20,13 @@ class AuthenticationMailController extends Controller
 
             $emails_scheduled = $current_jobs->count();
 
-            $teoretical_time_to_process = $this->map($emails_scheduled, 0, 1000, 0, 10);
+            $theoretical_time_to_process = $this->map($emails_scheduled, 0, 1000, 0, 10);
 
             return response()
                 ->json(
                     ['request' => 'processed'
                         , 'email' => $emails_scheduled > 100 ? 'queued' : 'send'
-                        , 'procces_time' => $teoretical_time_to_process]
+                        , 'process_time' => $theoretical_time_to_process]
                 );
         } catch (Throwable $error) {
             Log::error('UserRegisteredError', ["error" => $error]);
@@ -41,16 +41,16 @@ class AuthenticationMailController extends Controller
 
             $emails_scheduled = $current_jobs->count();
 
-            $teoretical_time_to_process = $this->map($emails_scheduled, 0, 1000, 0, 100);
+            $theoretical_time_to_process = $this->map($emails_scheduled, 0, 1000, 0, 100);
 
             return response()
                 ->json(
                     ['request' => 'processed'
                         , 'email' => $emails_scheduled > 100 ? 'queued' : 'send'
-                        , 'procces_time' => $teoretical_time_to_process]
+                        , 'process_time' => $theoretical_time_to_process]
                 );
         } catch (Throwable $error) {
-            Log::error('UserPaswordReset', ["error" => $error]);
+            Log::error('UserPasswordReset', ["error" => $error]);
         }
     }
 
