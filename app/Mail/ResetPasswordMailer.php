@@ -11,16 +11,16 @@ class ResetPasswordMailer extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private $reset_code;
+    private $reset_link;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($code)
+    public function __construct($link)
     {
-        $this->reset_code = $code;
+        $this->reset_link = $link;
     }
 
     /**
@@ -32,7 +32,7 @@ class ResetPasswordMailer extends Mailable
     {
         return $this->view('mail.reset_password')
             ->with([
-                'reset_code' => $this->reset_code,
+                'reset_link' => $this->reset_link,
             ]);
     }
 }

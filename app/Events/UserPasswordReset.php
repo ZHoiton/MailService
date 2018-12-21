@@ -10,7 +10,7 @@ class UserPasswordReset
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $reset_code;
+    public $reset_link;
 
     public $user_email;
 
@@ -19,9 +19,9 @@ class UserPasswordReset
      *
      * @return void
      */
-    public function __construct($email, $reset_code)
+    public function __construct($email, $reset_link)
     {
-        $this->reset_code = $reset_code;
+        $this->reset_link = $reset_link;
         $this->user_email = $email;
     }
 }

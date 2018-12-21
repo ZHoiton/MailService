@@ -29,8 +29,8 @@ class SendActivation implements ShouldQueue
     public function handle($event)
     {
         Mail::to($event->user_email)
-        ->send(new ActivationMailer($event->activation_code));
+        ->send(new ActivationMailer($event->activation_link));
 
-        Log::info('SendActivation', ["activation_code" => $event->activation_code, "email" => $event->user_email]);
+        Log::info('SendActivation', ["activation_link" => $event->activation_link, "email" => $event->user_email]);
     }
 }

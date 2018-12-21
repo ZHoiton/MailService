@@ -10,7 +10,7 @@ class UserRegistered
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $activation_code;
+    public $activation_link;
 
     public $user_email;
 
@@ -19,9 +19,9 @@ class UserRegistered
      *
      * @return void
      */
-    public function __construct($email, $activation_code)
+    public function __construct($email, $activation_link)
     {
-        $this->activation_code = $activation_code;
+        $this->activation_link = $activation_link;
         $this->user_email = $email;
     }
 }

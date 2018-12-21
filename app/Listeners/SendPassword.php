@@ -29,8 +29,8 @@ class SendPassword implements ShouldQueue
     public function handle($event)
     {
         Mail::to($event->user_email)
-        ->send(new ResetPasswordMailer($event->reset_code));
+        ->send(new ResetPasswordMailer($event->reset_link));
 
-        Log::info('SendPassword', ["reset_code" => $event->reset_code, "email" => $event->user_email]);
+        Log::info('SendPassword', ["reset_link" => $event->reset_link, "email" => $event->user_email]);
     }
 }

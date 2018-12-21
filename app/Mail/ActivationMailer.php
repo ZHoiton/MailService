@@ -10,16 +10,16 @@ class ActivationMailer extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private $activation_code;
+    private $activation_link;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($code)
+    public function __construct($link)
     {
-        $this->activation_code = $code;
+        $this->activation_link = $link;
     }
 
     /**
@@ -31,7 +31,7 @@ class ActivationMailer extends Mailable
     {
         return $this->view('mail.activate_user')
             ->with([
-                'activation_code' => $this->activation_code,
+                'activation_link' => $this->activation_link,
             ]);
     }
 }

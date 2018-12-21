@@ -3,10 +3,10 @@
 namespace MailService\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Log;
 use MailService\Events\UserPasswordReset;
 use MailService\Events\UserRegistered;
-use MailService\Jobs;
 use Throwable;
 
 class AuthenticationMailController extends Controller
@@ -14,57 +14,127 @@ class AuthenticationMailController extends Controller
     public function UserRegistered(Request $request)
     {
         try {
-            event(new UserRegistered($request->email, $request->activation_code));
+            try {
+                $this->validate($request, [
+                    'activation_link' => 'required',
+                    'email' => 'required|email',
+                ]);
+            } catch (ValidationException $exception) {
 
-            $current_jobs = Jobs::all();
+                Log::error('RegisterValidationError', ["error" => $exception]);
 
-            $emails_scheduled = $current_jobs->count();
+                return response()
+                    ->json(
+                        [
+                            'status' => 'Bad Request',
+                            'code' => 400,
+                            'messages' => ["information is incomplete or malformed"],
+                            'data' => [],
+                            'error' => [
+                                'status' => 400,
+                                'error' => 'REQUEST_VALIDATION_ERROR',
+                                'description' => 'And error was rased when trying to validate the request',
+                                'fields' => [],
+                            ],
+                        ], 400
+                    );
 
-            $theoretical_time_to_process = $this->map($emails_scheduled, 0, 1000, 0, 10);
+            }
+
+            event(new UserRegistered($request->email, $request->activation_link));
 
             return response()
                 ->json(
-                    ['request' => 'processed'
-                        , 'email' => $emails_scheduled > 100 ? 'queued' : 'send'
-                        , 'process_time' => $theoretical_time_to_process]
+                    [
+                        'status' => 'ok',
+                        'code' => 200,
+                        'messages' => ["email queued successfully"],
+                        'data' => [
+                            'state' => 'queued',
+                        ],
+                        'error' => [],
+                    ], 200
                 );
         } catch (Throwable $error) {
             Log::error('UserRegisteredError', ["error" => $error]);
+            return response()
+                ->json(
+                    [
+                        'status' => 'Internal Server Error',
+                        'code' => 500,
+                        'messages' => ["server error"],
+                        'data' => [],
+                        'error' => [
+                            'status' => 500,
+                            'error' => 'SERVER_ERROR',
+                            'description' => 'An error occured when trying to send an email.',
+                            'fields' => [],
+                        ],
+                    ], 500
+                );
         }
     }
     public function UserPasswordReset(Request $request)
     {
         try {
-            event(new UserPasswordReset($request->email, $request->reset_code));
 
-            $current_jobs = Jobs::all();
+            try {
+                $this->validate($request, [
+                    'reset_link' => 'required',
+                    'email' => 'required|email',
+                ]);
+            } catch (ValidationException $exception) {
 
-            $emails_scheduled = $current_jobs->count();
+                Log::error('ResetValidationError', ["error" => $exception]);
 
-            $theoretical_time_to_process = $this->map($emails_scheduled, 0, 1000, 0, 100);
+                return response()
+                    ->json(
+                        [
+                            'status' => 'Bad Request',
+                            'code' => 400,
+                            'messages' => ["information is incomplete or malformed"],
+                            'data' => [],
+                            'error' => [
+                                'status' => 400,
+                                'error' => 'REQUEST_VALIDATION_ERROR',
+                                'description' => 'And error was rased when trying to validate the request',
+                                'fields' => [],
+                            ],
+                        ], 400
+                    );
+
+            }
+            event(new UserPasswordReset($request->email, $request->reset_link));
 
             return response()
                 ->json(
-                    ['request' => 'processed'
-                        , 'email' => $emails_scheduled > 100 ? 'queued' : 'send'
-                        , 'process_time' => $theoretical_time_to_process]
+                    [
+                        'status' => 'ok',
+                        'code' => 200,
+                        'messages' => ["email queued successfully"],
+                        'data' => [
+                            'state' => 'queued',
+                        ],
+                        'error' => [],
+                    ], 200
                 );
         } catch (Throwable $error) {
             Log::error('UserPasswordReset', ["error" => $error]);
+            return response()
+                ->json(
+                    [
+                        'status' => 'Internal Server Error',
+                        'code' => 500,
+                        'messages' => ["server error"],
+                        'data' => [],
+                        'error' => [
+                            'status' => 500,
+                            'error' => 'SERVER_ERROR',
+                            'description' => 'An error occured when trying to send an email.',
+                            'fields' => [],
+                        ],
+                    ], 500
+                );
         }
-    }
-
-    private function map($value, $from_low, $from_high, $to_low, $to_high)
-    {
-        $fromRange = $from_high - $from_low;
-        $toRange = $to_high - $to_low;
-        $scaleFactor = $toRange / $fromRange;
-
-        // Re-zero the value within the from range
-        $tmpValue = $value - $from_low;
-        // Rescale the value to the to range
-        $tmpValue *= $scaleFactor;
-        // Re-zero back to the to range
-        return $tmpValue + $to_low;
     }
 }
