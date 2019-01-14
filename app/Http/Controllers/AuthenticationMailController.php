@@ -40,7 +40,7 @@ class AuthenticationMailController extends Controller
                     );
 
             }
-
+            
             event(new UserRegistered($request->email, $request->activation_link));
 
             return response()
@@ -67,7 +67,7 @@ class AuthenticationMailController extends Controller
                         'error' => [
                             'status' => 500,
                             'error' => 'SERVER_ERROR',
-                            'description' => 'An error occured when trying to send an email.',
+                            'description' => 'An error occurred when trying to send an email.',
                             'fields' => [],
                         ],
                     ], 500
@@ -130,7 +130,7 @@ class AuthenticationMailController extends Controller
                         'error' => [
                             'status' => 500,
                             'error' => 'SERVER_ERROR',
-                            'description' => 'An error occured when trying to send an email.',
+                            'description' => 'An error occurred when trying to send an email.',
                             'fields' => [],
                         ],
                     ], 500
